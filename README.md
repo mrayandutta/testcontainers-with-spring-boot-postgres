@@ -60,8 +60,8 @@ mvn spring-boot:run
 ```
 #### With TestContainer
 
-1.  **Ensure Docker is installed and running **
-2.  **Build and run the Docker Compose setup:**
+1.  Ensure Docker is installed and running 
+2.  Build and run the Docker Compose setup
 
 ```bash
 mvn spring-boot:run
