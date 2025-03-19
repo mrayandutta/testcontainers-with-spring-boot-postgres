@@ -36,8 +36,8 @@ This project is a Spring Boot application that provides a RESTful API for managi
 1.  **Clone the repository:**
 
 ```bash
-    git clone https://github.com/j2eeexpert2015/retail-order-system-with-postgres.git
-    cd retail-order-system-with-postgres
+    git clone https://github.com/j2eeexpert2015/testcontainers-with-spring-boot-postgres.git
+    cd testcontainers-with-spring-boot-postgres
 ```
 
 2.  **Build the application:**
@@ -58,6 +58,12 @@ docker-compose build
 docker-compose up
 mvn spring-boot:run
 ```
+####  Access Swagger UI
+
+```bash
+http://localhost:8080/swagger-ui/index.html
+```
+
 #### With TestContainer
 
 1.  Ensure Docker is installed and running 
