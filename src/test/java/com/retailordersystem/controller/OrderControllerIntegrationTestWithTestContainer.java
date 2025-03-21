@@ -1,7 +1,6 @@
 package com.retailordersystem.controller;
 
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,8 +41,8 @@ public class OrderControllerIntegrationTestWithTestContainer {
 
     private static final Integer TIMEOUT = 120;
     private static final Logger logger = LoggerFactory.getLogger(OrderControllerIntegrationTestWithTestContainer.class);
-	
-	@Autowired
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -51,11 +50,11 @@ public class OrderControllerIntegrationTestWithTestContainer {
 
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @Container
-    static PostgreSQLContainer<?> postgres = 
+    static PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>(DockerImageName.parse(DockerImageConstants.POSTGRES_IMAGE));
-    
+
     @BeforeAll
     static void startContainers() {
         // Ensure PostgreSQL is running
@@ -74,14 +73,14 @@ public class OrderControllerIntegrationTestWithTestContainer {
 
     @Test
     public void shouldCreateOrderAndPublishEvent() throws Exception {
-    	
+
         // Create a new order
         Order order = new Order("DUMMY_STATUS", "Order from Integration Test");
 
         // Perform POST request to create the order (using objectMapper)
         MvcResult mvcResult = mockMvc.perform(post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(order))) 
+                        .content(objectMapper.writeValueAsString(order)))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("DUMMY_STATUS")))
                 .andReturn();
@@ -93,5 +92,5 @@ public class OrderControllerIntegrationTestWithTestContainer {
         Order savedOrder = orderRepository.findById(orderId).orElseThrow();
         assertThat(savedOrder.getStatus()).isEqualTo("DUMMY_STATUS");
     }
-    
+
 }
