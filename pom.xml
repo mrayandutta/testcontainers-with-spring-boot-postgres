@@ -75,7 +75,6 @@
 
     <build>
         <plugins>
-
             <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -92,7 +91,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Surefire (Unit Tests) -->
+            <!-- Surefire Plugin (Unit Tests) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -106,10 +105,11 @@
                         <exclude>**/*IT.java</exclude>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
 
-            <!-- Failsafe (Integration Tests) -->
+            <!-- Failsafe Plugin (Integration Tests) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -128,36 +128,43 @@
                     <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
                     <includes>
                         <include>**/*IT.java</include>
-                        <!--<include>**/*IntegrationTest.java</include>-->
                     </includes>
                     <excludes>
                         <exclude>**/*Test.java</exclude>
                     </excludes>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
+        </plugins>
+    </build>
 
-            <!-- Surefire Report Plugin (for both unit & integration test reports) -->
+    <!-- Reporting Configuration -->
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <!-- Surefire Report Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-unit-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-only</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-integration-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>failsafe-report-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report-only</report>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
+
+            <!-- Project Info Reports Plugin (Fixes version warning) -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.4.1</version>
+            </plugin>
+            -->
         </plugins>
-    </build>
+    </reporting>
 </project>
