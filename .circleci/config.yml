@@ -1,0 +1,63 @@
+version: 2.1
+
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/openjdk:17.0  # Java 17 environment
+    resource_class: medium
+
+jobs:
+  test-with-testcontainers:
+    executor: docker-executor
+    environment:
+      TESTCONTAINERS_RYUK_DISABLED: "true"
+      TESTCONTAINERS_CHECKS_DISABLE: "true"
+      USE_TESTCONTAINERS: "true"
+    steps:
+      - checkout  # Fetch latest code
+
+      - setup_remote_docker:  # Ensures Testcontainers can run containers inside CircleCI
+          docker_layer_caching: true
+
+      - run:
+          name: Run Unit and Integration Tests with Testcontainers
+          command: |
+            mvn clean verify \
+              -Dspring.test.database.replace=NONE \
+              -Dlogging.level.org.testcontainers=DEBUG \
+              -Dsurefire.useFile=false
+
+      # Collect and store test results for CircleCI
+      - run:
+          name: Save Test Results (XML)
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+            find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/test-results
+
+      # Store test reports (JUnit XML) as artifacts for debugging
+      - store_artifacts:
+          path: ~/test-results
+          destination: test-results
+
+      # Ensure full HTML reports with assets (CSS, JS, Images)
+      - run:
+          name: Save Complete Test Reports (HTML, CSS, Images)
+          command: |
+            mkdir -p ~/test-reports/
+            cp -r target/site/* ~/test-reports/  # Copies all files & folders from target/site/
+          when: always
+
+      - store_artifacts:
+          path: ~/test-reports
+          destination: test-reports
+
+workflows:
+  version: 2
+  test-flow:
+    jobs:
+      - test-with-testcontainers
